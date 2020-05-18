@@ -1,6 +1,6 @@
-package templates.applications;
+package applications;
 
-import utils.ShapesComponent;
+import utils.ShapesPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,8 +17,8 @@ public abstract class Application extends JFrame {
     protected ActionListener addShapeListener;
     protected ActionListener endListener;
 
-    protected ShapesComponent shapesComponent;
     protected JPanel buttonPanel;
+    protected ShapesPanel shapesPanel;
 
     protected static volatile boolean isRun = false;
     protected static volatile boolean isAddButtonClicked = false;
@@ -43,22 +43,34 @@ public abstract class Application extends JFrame {
     /*
     *   Steps
     * */
-    protected void start() {}
-    protected abstract void addShape();
+    private void initApplication() {
+        initBounds();
+        initListeners();
+        initButtonsPanel();
+        initShapesPanel();
+    }
+
+    private void start() {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                add(shapesPanel, BorderLayout.CENTER);
+                add(buttonPanel, BorderLayout.SOUTH);
+                show();
+            }
+        });
+    }
 
     private void end() {
         System.exit(0);
     }
 
+    protected abstract void addShape();
 
 
-    protected void initApplication() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        locationX = (screenSize.width - WINDOW_WIDTH) / 2;
-        locationY = (screenSize.height - WINDOW_HEIGHT) / 2;
-    }
 
-    protected void initListeners() {
+
+
+    private void initListeners() {
         addShapeListener = new ActionListener(){
             public void actionPerformed(ActionEvent event){
                 isAddButtonClicked = true;
@@ -71,25 +83,29 @@ public abstract class Application extends JFrame {
         };
     }
 
-    protected void initBounce() {
-        setTitle("Template Method");
-        shapesComponent = new ShapesComponent();
-        shapesComponent.setBackground(Color.cyan);
-        add(shapesComponent, BorderLayout.CENTER);
-        buttonPanel = new JPanel();
-
-        addButton(buttonPanel, "Пуск", addShapeListener);
-        addButton(buttonPanel, "Закрыть", endListener);
-        add(buttonPanel, BorderLayout.SOUTH);
-    }
-
-    protected void addButton (Container container, String title, ActionListener listener){
+    private void addButton (Container container, String title, ActionListener listener){
         JButton button = new JButton(title);
         container.add(button);
         button.addActionListener(listener);
     }
 
-    public ShapesComponent getShapesComponent() {
-        return shapesComponent;
+    private void initBounds() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        locationX = (screenSize.width - WINDOW_WIDTH) / 2;
+        locationY = (screenSize.height - WINDOW_HEIGHT) / 2;
+
+        setResizable(false);
+        setBounds(locationX, locationY, WINDOW_WIDTH, WINDOW_HEIGHT);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+
+    private void initButtonsPanel() {
+        buttonPanel = new JPanel();
+        addButton(buttonPanel, "Пуск", addShapeListener);
+        addButton(buttonPanel, "Закрыть", endListener);
+    }
+
+    private void initShapesPanel() {
+        shapesPanel = new ShapesPanel();
     }
 }

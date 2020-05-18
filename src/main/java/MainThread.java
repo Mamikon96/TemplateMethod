@@ -1,7 +1,7 @@
-import templates.applications.Application;
-import templates.applications.BallApplication;
-import templates.applications.SquareApplication;
-import templates.applications.StarApplication;
+import applications.Application;
+import applications.BallApplication;
+import applications.SquareApplication;
+import applications.StarApplication;
 
 public class MainThread {
 
